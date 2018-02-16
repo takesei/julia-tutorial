@@ -4,6 +4,7 @@ Juliaをいじり始めました.
 ## 参考url
 1. <https://juliabyexample.helpmanual.io/>
 2. <http://ucidatascienceinitiative.github.io/IntroToJulia/>
+3. <https://github.com/stevengj/18S096>
 
 ここを見て勉強する/
 
