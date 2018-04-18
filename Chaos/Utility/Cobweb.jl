@@ -1,13 +1,13 @@
 module Cobweb
 
-export render
+export cobweb
 
   _rendering(x, f) = [[x,x],[x,f(x)]], [[x,f(x)],[f(x),f(x)]], f(x)
   _initial_rendering(x, f) = [[x,x],[x,f(x)]], [[0,f(x)],[f(x),f(x)]], f(x)
 
-  function render(x_0, f, N=100)
+  function cobweb(f, x_0, N=100)
     """
-    cobweb(x_0, f, N=1000) -> [x, y]
+    cobweb(f, x_0, N=1000) -> [x, y]
 
     When you use this with Plots,
     Do not forget to assign "" in the label property
