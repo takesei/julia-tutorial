@@ -1,39 +1,51 @@
 module Cobweb
 
-export cobweb, cobweb_plot
-
 using Plots
-gr()
 
-  _rendering(x, f) = [[x,x],[x,f(x)]], [[x,f(x)],[f(x),f(x)]], f(x)
-  _initial_rendering(x, f) = [[x,x],[x,f(x)]], [[0,f(x)],[f(x),f(x)]], f(x)
+export cobweb_plot
 
-  function cobweb(f, x_0, N=100)
-    x, y, v = _initial_rendering(x_0, f)
-    for i=2:N
-      _x, _y, v = _rendering(v, f)
-      append!(x, _x)
-      append!(y, _y)
-    end
-    return [x, y]
-  end
-
-  function cobweb_plot(f, domein, x_0, N=100)
-    range = [f(i)for i in domein]
-    diagonal = copy(domein)
-    plot(domein, [range, diagonal], label="", lw=2)
-    x, y = [], []
-
-    for _x_0 in x_0
-      _x, _y = cobweb(f, _x_0, N)
-      append!(x, _x)
-      append!(y, _y)
+    function _rendering(x, fx)
+      plot!([x,x], [x,fx], label="", color="green")
+      plot!([x,fx], [fx,fx], label="", color="green")
     end
 
-    if maximum(range) < maximum(diagonal)
-      plot!(x, y, label="", color="green", xlims=[minimum(domein), maximum(domein)], ylim=[minimum(diagonal), maximum(diagonal)])
-    else
-      plot!(x, y, label="", color="green", xlims=[minimum(domein), maximum(domein)], ylim=[minimum(range), maximum(range)])
+    function _init_rendering(x, fx)
+      plot!([x,x], [0,fx], label="", color="green")
+      plot!([x,fx], [fx,fx], label="", color="green")
     end
-  end
+
+
+    function _cobweb(f, x_0, N)
+      rv = []
+      for i in x_0
+        orb = zeros(N+1)
+        orb[1] = i
+        for i=1:N
+          orb[i+1] = f(orb[i])
+        end
+
+        _init_rendering(orb[1], orb[2])
+        for i=2:N
+          _rendering(orb[i], orb[i+1])
+        end
+
+        push!(rv, orb)
+      end
+      rv
+    end
+
+
+    function cobweb_plot(f, domein, x_0, N=100)
+
+      range = [f(i)for i in domein]
+      diagonal = copy(domein)
+      plot(domein, [range, diagonal], label="", lw=2)
+
+      x_l = [minimum(domein), maximum(domein)]
+      y_l = maximum(range)<maximum(diagonal) ? [minimum(diagonal), maximum(diagonal)] : [minimum(range), maximum(range)]
+
+      rv = _cobweb(f, x_0, N)
+      plot!(xlim=x_l, ylim=y_l)
+      rv
+    end
 end
